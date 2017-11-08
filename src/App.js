@@ -36,7 +36,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      jobList: []
+      jobList: {}
     };
   }
 
@@ -47,18 +47,25 @@ class App extends Component {
       .get()
       .then(querySnapshot => {
         querySnapshot.forEach(doc => {
-          const newJobList = this.state.jobList.concat(doc.data());
+          const id = doc.id;
           this.setState({
-            jobList: newJobList
+            jobList: {
+              ...this.state.jobList,
+              [id]: doc.data()
+            }
           });
         });
       });
+
     db.collection('jobs').onSnapshot(querySnapshot => {
       querySnapshot.docChanges.forEach(change => {
         if (change.type === 'added') {
-          const newJobList = this.state.jobList.concat(change.doc.data());
+          const id = change.doc.id;
           this.setState({
-            jobList: newJobList
+            jobList: {
+              ...this.state.jobList,
+              [id]: change.doc.data()
+            }
           });
         }
       });
@@ -67,8 +74,8 @@ class App extends Component {
   render() {
     const jobList =
       this.state.jobList &&
-      this.state.jobList.map((job, i) => (
-        <SimpleCard data={job} key={job.jobId + i} />
+      Object.keys(this.state.jobList).map(id => (
+        <SimpleCard data={this.state.jobList[id]} key={id} />
       ));
     return (
       <div className="App">

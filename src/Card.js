@@ -11,7 +11,7 @@ const styles = theme => ({
   card: {
     display: 'inline-block',
     margin: 10,
-    width: 275
+    width: 255
   },
   bullet: {
     display: 'inline-block',
